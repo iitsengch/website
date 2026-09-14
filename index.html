@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教學檔案中心</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    header {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: white;
+      padding: 50px 20px;
+    }
+
+    .header-inner {
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: 36px;
+    }
+
+    header p {
+      margin: 0;
+      opacity: 0.9;
+      font-size: 17px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .section-title {
+      margin-bottom: 20px;
+    }
+
+    .section-title h2 {
+      margin: 0 0 6px;
+    }
+
+    .section-title p {
+      margin: 0;
+      color: #6b7280;
+    }
+
+    .files {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .file-card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e5e7eb;
+      transition: 0.2s;
+    }
+
+    .file-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .file-icon {
+      font-size: 38px;
+      margin-bottom: 15px;
+    }
+
+    .file-card h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .file-card p {
+      color: #6b7280;
+      line-height: 1.6;
+      min-height: 50px;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 18px;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: 0.2s;
+    }
+
+    .button:hover {
+      background: #1d4ed8;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #9ca3af;
+      font-size: 14px;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 35px 20px;
+      }
+
+      header h1 {
+        font-size: 28px;
+      }
+
+      main {
+        margin-top: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-inner">
+      <h1>📚 教學檔案中心</h1>
+      <p>歡迎來到教學資料下載與閱讀中心</p>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="section-title">
+      <h2>教學檔案</h2>
+      <p>請選擇下方的教學資料開始閱讀。</p>
+    </div>
+
+    <div class="files">
+
+      <!-- 教學檔案 1 -->
+      <div class="file-card">
+        <div class="file-icon">📘</div>
+        <h3>抽韱</h3>
+        <p>
+          抽韱程式
+        </p>
+        <a class="button" href="draw/index.html" target="_blank">
+          開啟檔案
+        </a>
+      </div>
+
+      <!-- 教學檔案 2 -->
+      <div class="file-card">
+        <div class="file-icon">📗</div>
+        <h3>進階教學</h3>
+        <p>
+          更進階的操作說明與實際案例。
+        </p>
+        <a class="button" href="files/advanced.pdf" target="_blank">
+          開啟檔案
+        </a>
+      </div>
+
+      <!-- 教學檔案 3 -->
+      <div class="file-card">
+        <div class="file-icon">📕</div>
+        <h3>操作手冊</h3>
+        <p>
+          完整的操作手冊與常見問題說明。
+        </p>
+        <a class="button" href="files/manual.pdf" target="_blank">
+          開啟檔案
+        </a>
+      </div>
+
+      <!-- 教學檔案 4 -->
+      <div class="file-card">
+        <div class="file-icon">💻</div>
+        <h3>範例程式</h3>
+        <p>
+          教學過程使用的範例程式與相關檔案。
+        </p>
+        <a class="button" href="files/example.zip">
+          下載檔案
+        </a>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer>
+    © 2026 教學檔案中心
+  </footer>
+
+</body>
+</html>
