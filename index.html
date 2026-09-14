@@ -3,9 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>教學檔案中心</title>
 
   <style>
+    /* =========================
+       基本設定
+    ========================= */
+
     * {
       box-sizing: border-box;
     }
@@ -13,200 +18,563 @@
     body {
       margin: 0;
       font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI",
-        "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans TC",
+        "Microsoft JhengHei",
+        sans-serif;
+
       background: #f5f7fb;
       color: #1f2937;
     }
 
+
+    /* =========================
+       頁首
+    ========================= */
+
     header {
-      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      background: linear-gradient(
+        135deg,
+        #2563eb,
+        #4f46e5
+      );
+
       color: white;
-      padding: 50px 20px;
+      padding: 35px 20px;
     }
 
     .header-inner {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: auto;
     }
 
     header h1 {
-      margin: 0 0 10px;
-      font-size: 36px;
+      margin: 0 0 8px;
+      font-size: 30px;
+      font-weight: 700;
     }
 
     header p {
       margin: 0;
+      font-size: 15px;
       opacity: 0.9;
-      font-size: 17px;
     }
 
+
+    /* =========================
+       主要內容
+    ========================= */
+
     main {
-      max-width: 1000px;
-      margin: 40px auto;
+      max-width: 1100px;
+      margin: 30px auto;
       padding: 0 20px;
     }
 
+
+    /* =========================
+       標題
+    ========================= */
+
     .section-title {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .section-title h2 {
-      margin: 0 0 6px;
+      margin: 0 0 5px;
+      font-size: 22px;
     }
 
     .section-title p {
       margin: 0;
       color: #6b7280;
+      font-size: 14px;
     }
+
+
+    /* =========================
+       檔案卡片區
+    ========================= */
 
     .files {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 20px;
+
+      /*
+        桌面版：
+        自動排列成一排 4～5 個
+      */
+      grid-template-columns:
+        repeat(auto-fit, minmax(190px, 1fr));
+
+      gap: 14px;
     }
+
+
+    /* =========================
+       單一檔案卡片
+    ========================= */
 
     .file-card {
       background: white;
-      border-radius: 14px;
-      padding: 24px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+
+      border-radius: 10px;
+
+      padding: 16px;
+
       border: 1px solid #e5e7eb;
-      transition: 0.2s;
+
+      box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.05);
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
     }
+
+
+    /* 滑鼠移上去 */
 
     .file-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+
+      box-shadow:
+        0 7px 18px rgba(0, 0, 0, 0.09);
     }
+
+
+    /* =========================
+       檔案圖示
+    ========================= */
 
     .file-icon {
-      font-size: 38px;
-      margin-bottom: 15px;
+      font-size: 30px;
+
+      margin-bottom: 8px;
     }
+
+
+    /* =========================
+       檔案名稱
+    ========================= */
 
     .file-card h3 {
-      margin: 0 0 8px;
-      font-size: 20px;
+      margin: 0 0 6px;
+
+      font-size: 17px;
+
+      color: #111827;
     }
 
+
+    /* =========================
+       檔案說明
+    ========================= */
+
     .file-card p {
+      margin: 0;
+
       color: #6b7280;
-      line-height: 1.6;
-      min-height: 50px;
+
+      font-size: 13px;
+
+      line-height: 1.5;
+
+      min-height: 40px;
     }
+
+
+    /* =========================
+       按鈕
+    ========================= */
 
     .button {
       display: inline-block;
+
       margin-top: 10px;
-      padding: 10px 18px;
+
+      padding: 7px 12px;
+
       background: #2563eb;
+
       color: white;
+
       text-decoration: none;
-      border-radius: 8px;
-      transition: 0.2s;
+
+      border-radius: 6px;
+
+      font-size: 13px;
+
+      transition:
+        background 0.2s ease;
     }
 
     .button:hover {
       background: #1d4ed8;
     }
 
+
+    /* =========================
+       頁尾
+    ========================= */
+
     footer {
       text-align: center;
-      padding: 30px 20px;
+
+      padding: 25px 20px;
+
       color: #9ca3af;
-      font-size: 14px;
+
+      font-size: 13px;
     }
 
+
+    /* =========================
+       平板
+    ========================= */
+
+    @media (max-width: 800px) {
+
+      .files {
+        grid-template-columns:
+          repeat(3, 1fr);
+      }
+
+    }
+
+
+    /* =========================
+       手機
+    ========================= */
+
     @media (max-width: 600px) {
+
       header {
-        padding: 35px 20px;
+        padding: 28px 20px;
       }
 
       header h1 {
-        font-size: 28px;
+        font-size: 25px;
       }
 
       main {
         margin-top: 25px;
       }
+
+      .files {
+        grid-template-columns:
+          repeat(2, 1fr);
+
+        gap: 10px;
+      }
+
+      .file-card {
+        padding: 13px;
+      }
+
+      .file-icon {
+        font-size: 27px;
+      }
+
+      .file-card h3 {
+        font-size: 15px;
+      }
+
+      .file-card p {
+        font-size: 12px;
+      }
+
+      .button {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+
     }
+
+
+    /* =========================
+       超小手機
+    ========================= */
+
+    @media (max-width: 380px) {
+
+      .files {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
   </style>
 </head>
 
+
 <body>
 
+
+  <!-- =========================
+       頁首
+  ========================== -->
+
   <header>
+
     <div class="header-inner">
+
       <h1>📚 教學檔案中心</h1>
-      <p>歡迎來到教學資料下載與閱讀中心</p>
+
+      <p>
+        歡迎來到教學資料下載與閱讀中心
+      </p>
+
     </div>
+
   </header>
+
+
+
+  <!-- =========================
+       主要內容
+  ========================== -->
 
   <main>
 
-    <div class="section-title">
-      <h2>教學檔案</h2>
-      <p>請選擇下方的教學資料開始閱讀。</p>
-    </div>
+    <!-- =========================
+         檔案列表
+    ========================== -->
 
     <div class="files">
 
-      <!-- 教學檔案 1 -->
+
+      <!-- 01 入門教學 -->
+
       <div class="file-card">
-        <div class="file-icon">📘</div>
-        <h3>抽韱</h3>
+
+        <div class="file-icon">
+          📘
+        </div>
+
+        <h3>
+          抽韱
+        </h3>
+
         <p>
           抽韱程式
         </p>
-        <a class="button" href="draw/index.html" target="_blank">
-          開啟檔案
-        </a>
+
+        <a class="button" href="draw/index.html" target="_blank">開啟</a>
+
       </div>
 
-      <!-- 教學檔案 2 -->
+      <!-- 02 進階教學 -->
+
       <div class="file-card">
-        <div class="file-icon">📗</div>
-        <h3>進階教學</h3>
+
+        <div class="file-icon">
+          📗
+        </div>
+
+        <h3>
+          進階教學
+        </h3>
+
         <p>
-          更進階的操作說明與實際案例。
+          進階操作與實際案例。
         </p>
-        <a class="button" href="files/advanced.pdf" target="_blank">
-          開啟檔案
+
+        <a
+          class="button"
+          href="files/advanced.pdf"
+          target="_blank"
+        >
+          開啟
         </a>
+
       </div>
 
-      <!-- 教學檔案 3 -->
+
+
+      <!-- 03 操作手冊 -->
+
       <div class="file-card">
-        <div class="file-icon">📕</div>
-        <h3>操作手冊</h3>
+
+        <div class="file-icon">
+          📕
+        </div>
+
+        <h3>
+          操作手冊
+        </h3>
+
         <p>
-          完整的操作手冊與常見問題說明。
+          完整操作與常見問題。
         </p>
-        <a class="button" href="files/manual.pdf" target="_blank">
-          開啟檔案
+
+        <a
+          class="button"
+          href="files/manual.pdf"
+          target="_blank"
+        >
+          開啟
         </a>
+
       </div>
 
-      <!-- 教學檔案 4 -->
+
+
+      <!-- 04 範例程式 -->
+
       <div class="file-card">
-        <div class="file-icon">💻</div>
-        <h3>範例程式</h3>
+
+        <div class="file-icon">
+          💻
+        </div>
+
+        <h3>
+          範例程式
+        </h3>
+
         <p>
-          教學過程使用的範例程式與相關檔案。
+          教學範例與程式碼。
         </p>
-        <a class="button" href="files/example.zip">
-          下載檔案
+
+        <a
+          class="button"
+          href="files/example.zip"
+        >
+          下載
         </a>
+
       </div>
+
+
+
+      <!-- 05 教學影片 -->
+
+      <div class="file-card">
+
+        <div class="file-icon">
+          🎬
+        </div>
+
+        <h3>
+          教學影片
+        </h3>
+
+        <p>
+          教學影片與操作示範。
+        </p>
+
+        <a
+          class="button"
+          href="files/video.mp4"
+          target="_blank"
+        >
+          開啟
+        </a>
+
+      </div>
+
+
+
+      <!-- 06 FAQ -->
+
+      <div class="file-card">
+
+        <div class="file-icon">
+          ❓
+        </div>
+
+        <h3>
+          常見問題
+        </h3>
+
+        <p>
+          常見問題與解決方法。
+        </p>
+
+        <a
+          class="button"
+          href="files/faq.pdf"
+          target="_blank"
+        >
+          開啟
+        </a>
+
+      </div>
+
+
+
+      <!-- 07 注意事項 -->
+
+      <div class="file-card">
+
+        <div class="file-icon">
+          ⚠️
+        </div>
+
+        <h3>
+          注意事項
+        </h3>
+
+        <p>
+          使用時的重要注意事項。
+        </p>
+
+        <a
+          class="button"
+          href="files/notice.pdf"
+          target="_blank"
+        >
+          開啟
+        </a>
+
+      </div>
+
+
+
+      <!-- 08 其他資料 -->
+
+      <div class="file-card">
+
+        <div class="file-icon">
+          📂
+        </div>
+
+        <h3>
+          其他資料
+        </h3>
+
+        <p>
+          其他相關教學與附件。
+        </p>
+
+        <a
+          class="button"
+          href="files/other.pdf"
+          target="_blank"
+        >
+          開啟
+        </a>
+
+      </div>
+
 
     </div>
 
   </main>
 
+
+
+  <!-- =========================
+       頁尾
+  ========================== -->
+
   <footer>
+
     © 2026 教學檔案中心
+
   </footer>
+
 
 </body>
 </html>
