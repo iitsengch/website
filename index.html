@@ -34,6 +34,10 @@
        頁首
     ========================= */
 
+    /* 頁首藍色框高度：
+       調整 padding 的上下數值即可改變藍色區塊高度。
+       例如 20px 20px → 15px 20px，藍色框會再變矮。
+    */
     header {
       background: linear-gradient(
         135deg,
@@ -42,7 +46,7 @@
       );
 
       color: white;
-      padding: 35px 20px;
+      padding: 20px 20px;
     }
 
     .header-inner {
@@ -50,10 +54,18 @@
       margin: auto;
     }
 
+    /* 頁首主標題：📚 教學檔案中心 */
     header h1 {
       margin: 0 0 8px;
       font-size: 30px;
       font-weight: 700;
+    }
+
+    /* 頁首副標題：接在「教學檔案中心」後面 */
+    .header-subtitle {
+      font-size: 15px;
+      font-weight: 400;
+      opacity: 0.9;
     }
 
     header p {
@@ -251,11 +263,16 @@
     @media (max-width: 600px) {
 
       header {
-        padding: 28px 20px;
+        padding: 18px 20px;
       }
 
       header h1 {
         font-size: 25px;
+      }
+
+      /* 手機版副標題：稍微縮小，避免一行太擠 */
+      .header-subtitle {
+        font-size: 13px;
       }
 
       main {
@@ -320,11 +337,7 @@
 
     <div class="header-inner">
 
-      <h1>📚 教學檔案中心</h1>
-
-      <p>
-        歡迎來到教學資料下載與閱讀中心
-      </p>
+      <h1>📚 教學檔案中心 <span class="header-subtitle">｜歡迎來到教學資料下載與閱讀中心</span></h1>
 
     </div>
 
