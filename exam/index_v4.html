@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>麥寮高中考試看板系統</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&display=swap"
+      rel="stylesheet">
+
+<style>
+
+/* =========================================================
+   全域設定
+========================================================= */
+:root {
+
+    --bg-color: #000000;
+
+    --card-bg: #1a1a1a;
+    --card-border: #333333;
+
+    --text-main: #ffffff;
+    --text-gray: #b0b0b0;
+
+    --active-bg: #064e3b;
+    --active-text: #4ade80;
+
+    --font-left-column: 6.5vh;
+    --font-clock-num: 14vh;
+    --font-att-label: 3vh;
+    --font-att-num: 8.5vh;
+    --font-notif: 5.8vh;
+}
+
+
+/* =========================================================
+   全域初始化
+========================================================= */
+* {
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+    font-family: 'Klee One', cursive;
+}
+
+html,
+body {
+
+    width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    background: var(--bg-color);
+}
+
+
+/* =========================================================
+   頁面共用
+========================================================= */
+.page {
+
+    display: none;
+
+    width: 100%;
+    height: 100%;
+}
+
+.page.active {
+
+    display: block;
+}
+
+
+/* =========================================================
+   首頁
+========================================================= */
+#page-index {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    background: #0f172a;
+
+    color: #f8fafc;
+}
+
+
+/* 首頁標題 */
+#page-index h1 {
+
+    font-size: 3.5rem;
+
+    color: #38bdf8;
+
+    margin-bottom: 3.5rem;
+}
+
+
+/* 年級按鈕區 */
+.button-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, auto);
+
+    justify-content: center;
+
+    gap: 15px;
+
+    width: 100%;
+
+    max-width: 900px;
+}
+
+
+/* 年級按鈕 */
+.grade-btn {
+
+    background: #1e293b;
+
+    border: 2px solid #334155;
+
+    border-radius: 16px;
+
+    padding: 25px 10px;
+
+    font-size: 2.2rem;
+
+    font-weight: 600;
+
+    width: 200px;
+
+    color: #f8fafc;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.grade-btn:hover {
+
+    background: #0ea5e9;
+
+    transform: translateY(-5px);
+}
+
+
+/* =========================================================
+   主看板區域
+========================================================= */
+.grid-container {
+
+    display: grid;
+
+    grid-template-columns: 1.4fr 1fr;
+
+    grid-template-rows: 0.7fr 1fr 3.6fr;
+
+    grid-template-areas:
+        "notif notif"
+        "subj clock"
+        "subj att";
+
+    height: 98vh;
+
+    padding: 0.8vh;
+
+    gap: 1vh;
+
+    position: relative;
+}
+
+
+/* 共用卡片 */
+.box {
+
+    background: var(--card-bg);
+
+    border-radius: 3vh;
+
+    border: 1px solid var(--card-border);
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: 1.2vh;
+}
+
+
+/* =========================================================
+   雲端連線狀態
+========================================================= */
+.status-indicator {
+
+    position: absolute;
+
+    top: 2vh;
+    right: 3vw;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: 1.8vh;
+
+    color: #4ade80;
+
+    z-index: 10;
+}
+
+
+/* 狀態小圓點 */
+.dot {
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: #4ade80;
+
+    box-shadow: 0 0 10px #4ade80;
+}
+
+
+/* =========================================================
+   通知區
+========================================================= */
+.notif-box {
+
+    grid-area: notif;
+
+    flex-direction: row;
+
+    justify-content: flex-start;
+
+    padding: 0 3vw;
+
+    border: 2px solid #555;
+
+    overflow: hidden;
+}
+
+
+/* 左側通知文字 */
+.label-text-notif {
+
+    color: #ffeb3b;
+
+    border-right: 2px solid #444;
+
+    padding-right: 1.5vw;
+
+    font-size: 3vh;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* 跑馬燈容器 */
+#mq-container {
+
+    width: 100%;
+
+    overflow: hidden;
+
+    position: relative;
+}
+
+
+/* 跑馬燈文字 */
+.marquee-content {
+
+    white-space: nowrap;
+
+    display: inline-block;
+
+    padding-left: 2vw;
+
+    font-size: var(--font-notif);
+
+    color: #ffeb3b;
+}
+
+
+/* 跑馬燈動畫 */
+.animate-scroll {
+
+    animation: marquee-anim 15s linear infinite;
+}
+
+
+/* 跑馬燈位移 */
+@keyframes marquee-anim {
+
+    0% {
+
+        transform: translateX(0);
+    }
+
+    100% {
+
+        transform: translateX(-50%);
+    }
+}
+
+
+/* =========================================================
+   考程區
+========================================================= */
+.subjects-column {
+
+    grid-area: subj;
+
+    justify-content: flex-start;
+
+    align-items: stretch;
+
+    padding: 1vh 0.5vh;
+
+    gap: 0.5vh;
+}
+
+
+/* 每一列節次 */
+.subject-row {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1.4fr 1.3fr;
+	
+	height: 11vh;
+
+    align-items: center;
+
+    padding: 1vh 1.5vw;
+
+    border-radius: 2vh;
+
+    font-size: var(--font-left-column);
+
+    color: #ffffff;
+}
+
+
+/* 啟用中的節次 */
+.active-row {
+
+    background: var(--active-bg);
+
+    border: 2px solid var(--active-text);
+}
+
+.active-row span {
+
+    color: var(--active-text);
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   時鐘區
+========================================================= */
+.clock-box {
+
+    grid-area: clock;
+
+    flex-direction: row;
+
+    padding: 0.5vh 1.5vh;
+}
+
+
+/* 時間 */
+#clock {
+
+    margin-left: 2vw;
+
+    font-size: var(--font-clock-num);
+
+    font-weight: 600;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   出席區
+========================================================= */
+.att-box {
+
+    grid-area: att;
+
+    align-items: stretch;
+
+    padding: 1.5vh;
+
+    gap: 1vh;
+}
+
+
+/* 上方三個輸入框 */
+.att-inputs {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 2vw;
+
+    width: 100%;
+}
+
+
+/* 單一輸入區 */
+.att-item {
+
+    text-align: center;
+
+    color: var(--text-gray);
+
+    font-size: var(--font-att-label);
+}
+
+
+/* 數字輸入框 */
+.att-item input {
+
+    width: 100%;
+
+    margin-top: 0.5vh;
+
+    text-align: center;
+
+    background: #222;
+
+    color: var(--active-text);
+
+    border: 1px solid #444;
+
+    border-radius: 1vh;
+
+    font-size: var(--font-att-num);
+}
+
+
+/* 缺席座號 */
+textarea {
+
+    flex: 1;
+
+    margin-top: 1vh;
+
+    padding: 1.5vh;
+
+    background: #222;
+
+    color: #ffffff;
+
+    border: 1px solid #444;
+
+    border-radius: 1vh;
+
+    resize: none;
+
+    font-size: 3vh;
+}
+
+
+/* =========================================================
+   儲存按鈕
+========================================================= */
+#save-btn {
+
+    margin-top: 1vh;
+
+    padding: 1.2vh;
+
+    border: none;
+
+    border-radius: 1vh;
+
+    background: #334155;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+    font-size: 2.2vh;
+}
+
+
+/* =========================================================
+   回首頁
+========================================================= */
+.home-link {
+
+    position: fixed;
+
+    bottom: 1vh;
+
+    left: 1vh;
+
+    padding: 5px 10px;
+
+    background: #222;
+
+    color: white;
+
+    border: 1px solid #333;
+
+    border-radius: 5px;
+
+    cursor: pointer;
+
+    font-size: 1.5vh;
+
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   作者資訊
+========================================================= */
+.copyright {
+
+    position: fixed;
+
+    bottom: 0.8vh;
+
+    right: 1.5vw;
+
+    font-size: 1.5vh;
+
+    color: white;
+
+    opacity: 0.35;
+}
+
+
+/* =========================================================
+   [新增] 彈出式訊息視窗 (Modal) 樣式
+========================================================= */
+.modal-overlay {
+    display: none; /* 預設隱藏，啟用時改為 flex */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75); /* 半透明黑底 */
+    backdrop-filter: blur(6px); /* 輕微毛玻璃背景模糊效果 */
+    -webkit-backdrop-filter: blur(6px);
+    justify-content: center;
+    align-items: center;
+    z-index: 5000; /* 確保疊在最上層 */
+}
+
+.modal-card {
+    background: #1e1e1e;
+    border: 3px solid #ffeb3b; /* 明亮的黃色邊框提示 */
+    border-radius: 3vh;
+    width: 80vw;
+    max-width: 850px;
+    padding: 2vh 2vw;
+    box-shadow: 0 0 30px rgba(255, 235, 59, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+    text-align: center;
+}
+
+.modal-title {
+    font-size: 3.5vh;
+    color: #ffeb3b;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
+
+.modal-text {
+    font-size: 5vh;
+    color: #ffffff;
+    line-height: 1.2;
+	word-break: break-all;
+    font-weight: 600;
+}
+
+.modal-btn {
+    background: #ffeb3b;
+    color: #000000;
+    border: none;
+    border-radius: 1.5vh;
+    padding: 1.2vh 2vw;
+    font-size: 2.2vh;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.modal-btn:hover {
+    background: #f1c40f;
+    transform: scale(1.03);
+}
+
+.modal-btn:active {
+    transform: scale(0.98);
+}
+
+</style>
+</head>
+
+
+
+<body>
+
+<div id="page-index"
+     class="page active">
+
+    <h1 id="main-title">
+        麥寮高中考試時程表
+    </h1>
+
+    <div class="button-grid">
+
+        <button class="grade-btn"
+                onclick="goBoard('1')">國一</button>
+
+        <button class="grade-btn"
+                onclick="goBoard('2')">國二</button>
+
+        <button class="grade-btn"
+                onclick="goBoard('3')">國三</button>
+        </div>
+
+    <div class="copyright">
+        © TsengCH & Gemini & ChatGPT
+    </div>
+
+</div>
+
+
+
+<div id="page-board"
+     class="page">
+
+    <div class="status-indicator"
+         id="status-box">
+
+        <div class="dot"></div>
+
+        雲端資料連線中
+
+    </div>
+
+    <div class="grid-container">
+
+        <div class="box notif-box">
+
+            <div class="label-text-notif"
+                 id="grade-label">
+
+                通知
+
+            </div>
+
+            <div id="mq-container">
+
+                <div class="marquee-content"
+                     id="mq-content">
+
+                    Currently no message...
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="box subjects-column"
+             id="schedule-list">
+        </div>
+
+
+
+        <div class="box clock-box">
+
+            <div style="text-align:center;">
+
+                <div style="
+                    font-size:3vh;
+                    color:var(--text-gray);
+                ">
+                    目前時間
+                </div>
+
+                <div id="date-display"
+                     style="
+                        font-size:3.5vh;
+                        color:#f1c40f;
+                     ">
+                </div>
+
+            </div>
+
+            <div id="clock">
+
+                00:00
+
+            </div>
+
+        </div>
+
+
+
+        <div class="box att-box">
+
+            <div class="att-inputs">
+
+                <div class="att-item">
+
+                    應到
+
+                    <input type="number"
+                           id="in-1"
+                           oninput="saveData()">
+
+                </div>
+
+                <div class="att-item">
+
+                    實到
+
+                    <input type="number"
+                           id="in-2"
+                           oninput="saveData()">
+
+                </div>
+
+                <div class="att-item">
+
+                    缺席
+
+                    <input type="number"
+                           id="in-3"
+                           oninput="saveData()">
+
+                </div>
+
+            </div>
+
+            <textarea id="in-4"
+                      placeholder="在此輸入缺席學生座號與事由(11:請假)..."
+                      oninput="saveData()"></textarea>
+
+            <button id="save-btn"
+                    onclick="saveData(true)">
+
+                💾 儲存出席資料
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <a class="home-link"
+       onclick="goHome()">
+
+        🏠 回首頁
+
+    </a>
+
+    <div class="copyright">
+
+        © TsengCH & Gemini & ChatGPT
+
+    </div>
+
+</div>
+
+
+<div id="message-modal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-title">🔔 新訊息通知</div>
+        <div id="modal-msg-text" class="modal-text">訊息內容</div>
+        <button class="modal-btn" onclick="closeModal()">我已閱讀並知悉</button>
+    </div>
+</div>
+
+
+<script>
+
+/* =========================================================
+   Google Sheets ID
+========================================================= */
+const SHEET_ID = '1NLB2m3ALmpzWrfU6IcGe5Ms6lU8ycP1LdS-C6u_50Sk';
+
+
+
+/* =========================================================
+   全域變數
+========================================================= */
+let GRADE_LEVEL = '1';
+
+let currentDay = '';
+
+let examTitle = '麥寮高中考試時程表';
+
+let activePeriod = '';
+
+let lastMsg = '';
+
+let lastSchHTML = '';
+
+let isReady = false;
+
+const audio = new Audio('msg_notify.mp3');
+
+const gradeNames = {
+
+    '1':'國一',
+    '2':'國二',
+    '3':'國三',
+    '4':'高一',
+    '5':'高二',
+    '6':'高三'
+};
+
+let timer1;
+let timer2;
+
+
+
+/* =========================================================
+   localStorage Key
+========================================================= */
+function getStorageKey() {
+
+    return (
+        'exam_v27_g'
+        +
+        GRADE_LEVEL
+        +
+        '_day'
+        +
+        currentDay
+    );
+}
+
+
+
+/* =========================================================
+   進入主畫面
+========================================================= */
+function goBoard(g) {
+
+    GRADE_LEVEL = g;
+
+    isReady = false;
+
+    lastMsg = '';
+
+    lastSchHTML = '';
+
+    activePeriod = '';
+
+    document.getElementById('schedule-list')
+        .innerHTML = '';
+
+    document.getElementById('page-index')
+        .style.display = 'none';
+
+    document.getElementById('page-board')
+        .style.display = 'block';
+
+    initBoard();
+}
+
+
+
+/* =========================================================
+   回首頁
+========================================================= */
+function goHome() {
+
+    clearInterval(timer1);
+
+    clearInterval(timer2);
+
+    closeModal(); // 回首頁時順便防呆關閉視窗
+
+    document.getElementById('page-board')
+        .style.display = 'none';
+
+    document.getElementById('page-index')
+        .style.display = 'flex';
+}
+
+
+
+/* =========================================================
+   初始化系統
+========================================================= */
+async function initBoard() {
+
+    document.getElementById('grade-label')
+        .innerText =
+            gradeNames[GRADE_LEVEL] + '通知';
+
+    await refreshData();
+
+    loadLocal();
+
+    timer1 = setInterval(tick, 1000);
+
+    timer2 = setInterval(refreshData, 60000);
+
+    setTimeout(() => {
+
+        isReady = true;
+
+    }, 3000);
+}
+
+
+
+/* =========================================================
+   Google Sheets 查詢
+========================================================= */
+function gQuery(sheet) {
+
+    return new Promise((resolve) => {
+
+        const cb =
+            'jsonp_' +
+            Math.floor(Math.random() * 1000000);
+
+        window[cb] = (res) => {
+
+            resolve(
+
+                res.table.rows.map(r =>
+
+                    r.c.map(c =>
+
+                        (
+                            c
+                            ?
+                            (c.f || String(c.v || ''))
+                            :
+                            ''
+                        ).trim()
+                    )
+                )
+            );
+
+            delete window[cb];
+        };
+
+        const s =
+            document.createElement('script');
+
+        s.src =
+            `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:${cb}&sheet=${encodeURIComponent(sheet)}&t=${Date.now()}`;
+
+        document.body.appendChild(s);
+
+        s.onload = () => s.remove();
+    });
+}
+
+
+
+/* =========================================================
+   日期格式化
+========================================================= */
+function formatDate(str) {
+
+    return str
+        .replace(/上午|下午/g, '')
+        .split(' ')[0]
+        .trim();
+}
+
+
+
+/* =========================================================
+   讀取 Google Sheets 資料
+========================================================= */
+async function refreshData() {
+
+    try {
+
+        const now = new Date();
+
+        const todayStr =
+
+            `${now.getFullYear()}/${
+                String(now.getMonth()+1).padStart(2,'0')
+            }/${
+                String(now.getDate()).padStart(2,'0')
+            }`;
+
+        const cal =
+            await gQuery('Calendar');
+
+        currentDay = '';
+
+        examTitle = '麥寮高中考試時程表';
+
+        cal.forEach(r => {
+
+            if (
+                formatDate(r[0]) === todayStr
+            ) {
+
+                currentDay = String(r[1]);
+
+                if (r[2]) {
+
+                    examTitle = r[2];
+                }
+            }
+        });
+
+        document.getElementById('main-title')
+            .innerText = examTitle;
+
+        const list =
+            document.getElementById('schedule-list');
+
+        if (!currentDay) {
+
+            list.innerHTML =
+                `<div style="
+                    font-size:6vh;
+                    color:#666;
+                ">
+                    本日無考試
+                </div>`;
+
+            syncMessage();
+
+            return;
+        }
+
+        const sch =
+            await gQuery('Schedule');
+
+        const filtered = sch.filter(r =>
+
+            r[0] == GRADE_LEVEL
+            &&
+            r[1] == currentDay
+        );
+
+        let html = '';
+
+        if (filtered.length === 0) {
+
+            html = `
+                <div style="
+                    font-size:6vh;
+                    color:#666;
+                ">
+                    本日無考試
+                </div>
+            `;
+        }
+
+        else {
+
+            filtered.forEach(r => {
+
+                /* 空白列直接略過 */
+                if (!r[2] || !r[4] || !r[5]) return;
+
+                const s =
+                    r[4].padStart(5,'0');
+
+                const e =
+                    r[5].padStart(5,'0');
+
+                html += `
+
+                    <div class="subject-row"
+
+                         data-start="${s}"
+                         data-end="${e}"
+                         data-period="${r[2]}">
+
+                        <span>${r[2]}</span>
+
+                        <span>${r[3]}</span>
+
+                        <span>${s}~${e}</span>
+
+                    </div>
+                `;
+            });
+        }
+
+        if (html !== lastSchHTML) {
+
+            list.innerHTML = html;
+
+            lastSchHTML = html;
+        }
+
+        document.getElementById('status-box')
+            .innerHTML =
+                '<div class="dot"></div>雲端資料已連線..';
+
+        syncMessage();
+
+        tick();
+
+    } catch(e) {
+
+        console.error(e);
+
+        document.getElementById('status-box')
+            .innerHTML =
+                '<div class="dot" style="background:red;"></div>重連中...';
+    }
+}
+
+
+
+/* =========================================================
+   時鐘更新
+========================================================= */
+function tick() {
+
+    const now = new Date();
+
+    const time =
+
+        now.getHours()
+            .toString()
+            .padStart(2,'0')
+
+        +
+
+        ':'
+
+        +
+
+        now.getMinutes()
+            .toString()
+            .padStart(2,'0');
+
+    document.getElementById('clock')
+        .innerText = time;
+
+    document.getElementById('date-display')
+        .innerText =
+            (now.getMonth()+1)
+            +
+            '/'
+            +
+            now.getDate();
+
+    let foundPeriod = '';
+
+    document.querySelectorAll('.subject-row')
+        .forEach(row => {
+
+        if (
+
+            row.dataset.start
+            &&
+            time >= row.dataset.start
+            &&
+            time < row.dataset.end
+
+        ) {
+
+            row.classList.add('active-row');
+
+            foundPeriod =
+                row.dataset.period;
+
+        } else {
+
+            row.classList.remove('active-row');
+        }
+    });
+
+    if (foundPeriod !== activePeriod) {
+
+        activePeriod = foundPeriod;
+
+        syncMessage();
+    }
+}
+
+
+
+/* =========================================================
+   同步通知
+========================================================= */
+async function syncMessage() {
+
+    try {
+
+        const msgs =
+            await gQuery('Message');
+
+        let broadcastMsg = '';
+
+        let periodMsg = '';
+
+        msgs.forEach(row => {
+
+            const msgGrade = row[0];
+
+            const msgDay = row[1];
+
+            const msgPeriod = row[2];
+
+            const msgContent = row[3];
+
+            if (
+
+                (
+                    msgGrade == '0'
+                    ||
+                    msgGrade == GRADE_LEVEL
+                )
+
+                &&
+
+                msgPeriod == '廣播'
+
+            ) {
+
+                broadcastMsg = msgContent;
+            }
+
+            else if (
+
+                activePeriod
+
+                &&
+
+                (
+                    msgGrade == '0'
+                    ||
+                    msgGrade == GRADE_LEVEL
+                )
+
+                &&
+
+                msgDay == currentDay
+
+                &&
+
+                msgPeriod == activePeriod
+
+            ) {
+
+                periodMsg = msgContent;
+            }
+
+        });
+
+        updateMarquee(
+
+            broadcastMsg
+            ||
+            periodMsg
+            ||
+            '目前無任何訊息...'
+        );
+
+    } catch(e) {
+
+        console.error(e);
+    }
+}
+
+
+
+/* =========================================================
+   更新跑馬燈 [此處整合了新增的 Modal 彈出視窗觸發邏輯]
+========================================================= */
+function updateMarquee(msg) {
+
+    const content =
+        document.getElementById('mq-content');
+
+    if (msg === lastMsg) return;
+
+    const silent = [
+
+        '目前無任何訊息...',
+        '讀取訊息中...'
+
+    ].includes(msg);
+
+    if (
+
+        isReady
+        &&
+        !silent
+        &&
+        msg !== ''
+
+    ) {
+
+        audio.currentTime = 0;
+
+        audio.play().catch(()=>{});
+
+        // [新增] 當滿足「系統就緒」、「非預設空白字串」、「新訊息出現」三個條件時，觸發中央彈出式畫面
+        showModal(msg);
+    }
+
+    content.classList.remove('animate-scroll');
+
+    content.innerText = '【注意】' + msg;
+
+    void content.offsetWidth;
+
+    const container =
+        document.getElementById('mq-container');
+
+    if (
+
+        content.scrollWidth >
+        container.clientWidth
+
+    ) {
+
+        content.innerText =
+            '【注意】' + msg + '   ' +
+            '【注意】' + msg;
+
+        const duration = Math.max(
+
+            15,
+            msg.length * 0.4
+        );
+
+        content.style.animationDuration =
+            duration + 's';
+
+        content.classList.add('animate-scroll');
+    }
+
+    lastMsg = msg;
+}
+
+
+
+/* =========================================================
+   [新增] 彈出式視窗控制功能 (顯示與關閉)
+========================================================= */
+function showModal(msg) {
+    const modal = document.getElementById('message-modal');
+    const modalText = document.getElementById('modal-msg-text');
+    
+    modalText.innerText = msg;
+    modal.style.display = 'flex';
+}
+
+function closeModal() {
+    const modal = document.getElementById('message-modal');
+    modal.style.display = 'none';
+}
+
+
+
+/* =========================================================
+   儲存出席資料
+========================================================= */
+function saveData(showEffect = false) {
+
+    const d = {
+
+        a: document.getElementById('in-1').value,
+
+        b: document.getElementById('in-2').value,
+
+        c: document.getElementById('in-3').value,
+
+        d: document.getElementById('in-4').value
+    };
+
+    localStorage.setItem(
+
+        getStorageKey(),
+
+        JSON.stringify(d)
+    );
+
+    if (showEffect) {
+
+        const btn =
+            document.getElementById('save-btn');
+
+        const oldText =
+            btn.innerHTML;
+
+        btn.style.background =
+            '#16a34a';
+
+        btn.innerHTML =
+            '✅ 資料已儲存！';
+
+        setTimeout(() => {
+
+            btn.style.background =
+                '#334155';
+
+            btn.innerHTML =
+                oldText;
+
+        }, 1800);
+    }
+}
+
+
+
+/* =========================================================
+   載入出席資料
+========================================================= */
+function loadLocal() {
+
+    const s =
+        localStorage.getItem(
+            getStorageKey()
+        );
+
+    if (s) {
+
+        const d =
+            JSON.parse(s);
+
+        document.getElementById('in-1').value = d.a;
+        document.getElementById('in-2').value = d.b;
+        document.getElementById('in-3').value = d.c;
+        document.getElementById('in-4').value = d.d;
+
+    } else {
+
+        document.getElementById('in-1').value = 25;
+        document.getElementById('in-2').value = '';
+        document.getElementById('in-3').value = '';
+        document.getElementById('in-4').value = '';
+    }
+}
+
+
+/* =========================================================
+   網頁開啟時初始化首頁標題
+========================================================= */
+refreshData();
+
+</script>
+
+</body>
+</html>
