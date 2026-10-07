@@ -162,6 +162,17 @@ body {
 /* =========================================================
    主看板區域
 ========================================================= */
+.board-stage {
+
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 1920px;
+    height: 1080px;
+    transform-origin: center center;
+    overflow: hidden;
+}
+
 .grid-container {
 
     display: grid;
@@ -175,7 +186,8 @@ body {
         "subj clock"
         "subj att";
 
-    height: 98vh;
+    width: 1920px;
+    height: 1080px;
 
     padding: 0.8vh;
 
@@ -341,8 +353,6 @@ body {
     padding: 1vh 0.5vh;
 
     gap: 0.5vh;
-
-      overflow: hidden;
 }
 
 
@@ -353,11 +363,7 @@ body {
 
     grid-template-columns: 1fr 1.4fr 1.3fr;
 	
-	flex: 1 1 0;
-
-      min-height: 0;
-
-      height: auto;
+	height: 11vh;
 
     align-items: center;
 
@@ -685,7 +691,9 @@ textarea {
 
     </div>
 
-    <div class="grid-container">
+    <div class="board-stage" id="board-stage">
+
+        <div class="grid-container">
 
         <div class="box notif-box">
 
@@ -798,6 +806,8 @@ textarea {
 
     </div>
 
+        </div>
+
     <a class="home-link"
        onclick="goHome()">
 
@@ -826,10 +836,35 @@ textarea {
 <script>
 
 /* =========================================================
+   看板等比例自動縮放
+   基準尺寸：1920 x 1080
+   同時考慮瀏覽器寬度與高度，取較小倍率，
+   確保整個看板完整顯示且維持原本比例。
+========================================================= */
+function fitBoardToViewport() {
+
+    const stage = document.getElementById('board-stage');
+
+    if (!stage) return;
+
+    const scaleX = window.innerWidth / 1920;
+    const scaleY = window.innerHeight / 1080;
+    const scale = Math.min(scaleX, scaleY);
+
+    stage.style.transform =
+        `translate(-50%, -50%) scale(${scale})`;
+}
+
+window.addEventListener('resize', fitBoardToViewport);
+
+/* =========================================================
    Google Sheets ID
 ========================================================= */
 const SHEET_ID = '19bkyyGQLcV70gPD7cc-IrNmFErQAJ3QGrhJ7y_LgGoo';
 
+
+
+fitBoardToViewport();
 
 
 /* =========================================================
@@ -1089,114 +1124,51 @@ async function refreshData() {
             r[1] == currentDay
         );
 
-        /*
-         * 左側考程固定 7 節。
-         * 每一節高度由 CSS flex 平均分配左側可用高度，
-         * 因此瀏覽器高度改變時，7 節會自動跟著調整。
-         */
         let html = '';
 
-        const periodSlots = Array(7).fill(null);
-        const fallbackRows = [];
+        if (filtered.length === 0) {
 
-        filtered.forEach(r => {
+            html = `
+                <div style="
+                    font-size:6vh;
+                    color:#666;
+                ">
+                    本日無考試
+                </div>
+            `;
+        }
 
-            const periodText =
-                String(r[2] ?? '').trim();
+        else {
 
-            const match =
-                periodText.match(/(\d+)/);
+            filtered.forEach(r => {
 
-            const periodNo =
-                match ? Number(match[1]) : NaN;
+                /* 空白列直接略過 */
+                if (!r[2] || !r[4] || !r[5]) return;
 
-            if (
-                periodNo >= 1 &&
-                periodNo <= 7 &&
-                !periodSlots[periodNo - 1]
-            ) {
+                const s =
+                    r[4].padStart(5,'0');
 
-                periodSlots[periodNo - 1] = r;
-
-            } else {
-
-                fallbackRows.push(r);
-            }
-        });
-
-        /*
-         * 如果節次欄位無法辨識，
-         * 再依原本資料順序補入尚未使用的節次。
-         */
-        fallbackRows.forEach(r => {
-
-            const emptyIndex =
-                periodSlots.findIndex(
-                    item => item === null
-                );
-
-            if (emptyIndex !== -1) {
-                periodSlots[emptyIndex] = r;
-            }
-        });
-
-        periodSlots.forEach((r, index) => {
-
-            const defaultPeriod =
-                `第${index + 1}節`;
-
-            /*
-             * 沒有資料的節次仍保留一整列，
-             * 但不再顯示 00000~00000。
-             */
-            if (
-                !r ||
-                !r[2] ||
-                !r[3] ||
-                !r[4] ||
-                !r[5]
-            ) {
+                const e =
+                    r[5].padStart(5,'0');
 
                 html += `
 
                     <div class="subject-row"
-                         data-period="${defaultPeriod}">
 
-                        <span>${defaultPeriod}</span>
+                         data-start="${s}"
+                         data-end="${e}"
+                         data-period="${r[2]}">
 
-                        <span></span>
+                        <span>${r[2]}</span>
 
-                        <span></span>
+                        <span>${r[3]}</span>
+
+                        <span>${s}~${e}</span>
 
                     </div>
                 `;
-
-                return;
-            }
-
-            const s =
-                String(r[4]).padStart(5,'0');
-
-            const e =
-                String(r[5]).padStart(5,'0');
-
-            html += `
-
-                <div class="subject-row"
-
-                     data-start="${s}"
-                     data-end="${e}"
-                     data-period="${r[2]}">
-
-                    <span>${r[2]}</span>
-
-                    <span>${r[3]}</span>
-
-                    <span>${s}~${e}</span>
-
-                </div>
-            `;
-        });
+            });
+        }
 
         if (html !== lastSchHTML) {
 
