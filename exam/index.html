@@ -31,7 +31,7 @@
     --active-bg: #064e3b;
     --active-text: #4ade80;
 
-    --font-left-column: 6.5vh;
+    --font-left-column: 6.7vh;
     --font-clock-num: 14vh;
     --font-att-label: 3vh;
     --font-att-num: 8.5vh;
@@ -162,17 +162,6 @@ body {
 /* =========================================================
    主看板區域
 ========================================================= */
-.board-stage {
-
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    width: 1920px;
-    height: 1080px;
-    transform-origin: center center;
-    overflow: hidden;
-}
-
 .grid-container {
 
     display: grid;
@@ -186,10 +175,12 @@ body {
         "subj clock"
         "subj att";
 
-    width: 1920px;
-    height: 1080px;
+    height: 98vh;
 
     padding: 0.8vh;
+
+    /* 讓整個看板高度隨瀏覽器高度伸縮 */
+    min-height: 0;
 
     gap: 1vh;
 
@@ -353,6 +344,10 @@ body {
     padding: 1vh 0.5vh;
 
     gap: 0.5vh;
+
+    /* 左側七節平均分配目前可用高度，避免高度不足時互相擠壓 */
+    min-height: 0;
+    overflow: hidden;
 }
 
 
@@ -363,17 +358,38 @@ body {
 
     grid-template-columns: 1fr 1.4fr 1.3fr;
 	
-	height: 11vh;
+    height: auto;
+    min-height: 0;
+    flex: 1 1 0;
 
     align-items: center;
 
-    padding: 1vh 1.5vw;
+    padding: 0.8vh 1.5vw;
 
     border-radius: 2vh;
+
+    min-width: 0;
+    overflow: hidden;
 
     font-size: var(--font-left-column);
 
     color: #ffffff;
+}
+
+.subject-row span {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.subject-row span:nth-child(1),
+.subject-row span:nth-child(3) {
+    text-align: center;
+}
+
+.subject-row span:nth-child(2) {
+    text-align: left;
 }
 
 
@@ -431,6 +447,8 @@ body {
     padding: 1.5vh;
 
     gap: 1vh;
+    min-height: 0;
+    overflow: hidden;
 }
 
 
@@ -476,6 +494,8 @@ body {
     border-radius: 1vh;
 
     font-size: var(--font-att-num);
+    min-height: 0;
+    padding: 0;
 }
 
 
@@ -499,6 +519,7 @@ textarea {
     resize: none;
 
     font-size: 3vh;
+    min-height: 0;
 }
 
 
@@ -645,6 +666,36 @@ textarea {
     transform: scale(0.98);
 }
 
+
+
+/* =========================================================
+   高度自適應
+   - 所有主要尺寸以 vh 為基準，隨瀏覽器高度同步縮放
+   - 不改變原本左右欄與上下區塊比例
+   - 當高度不足時，內容區允許縮小，不讓文字把框架撐破
+========================================================= */
+@media (max-height: 850px) {
+
+    :root {
+        --font-left-column: 5.9vh;
+        --font-clock-num: 12vh;
+        --font-att-label: 2.6vh;
+        --font-att-num: 7.2vh;
+        --font-notif: 5.1vh;
+    }
+}
+
+@media (max-height: 700px) {
+
+    :root {
+        --font-left-column: 5.2vh;
+        --font-clock-num: 10.5vh;
+        --font-att-label: 2.3vh;
+        --font-att-num: 6.2vh;
+        --font-notif: 4.5vh;
+    }
+}
+
 </style>
 </head>
 
@@ -691,9 +742,7 @@ textarea {
 
     </div>
 
-    <div class="board-stage" id="board-stage">
-
-        <div class="grid-container">
+    <div class="grid-container">
 
         <div class="box notif-box">
 
@@ -806,8 +855,6 @@ textarea {
 
     </div>
 
-        </div>
-
     <a class="home-link"
        onclick="goHome()">
 
@@ -836,35 +883,10 @@ textarea {
 <script>
 
 /* =========================================================
-   看板等比例自動縮放
-   基準尺寸：1920 x 1080
-   同時考慮瀏覽器寬度與高度，取較小倍率，
-   確保整個看板完整顯示且維持原本比例。
-========================================================= */
-function fitBoardToViewport() {
-
-    const stage = document.getElementById('board-stage');
-
-    if (!stage) return;
-
-    const scaleX = window.innerWidth / 1920;
-    const scaleY = window.innerHeight / 1080;
-    const scale = Math.min(scaleX, scaleY);
-
-    stage.style.transform =
-        `translate(-50%, -50%) scale(${scale})`;
-}
-
-window.addEventListener('resize', fitBoardToViewport);
-
-/* =========================================================
    Google Sheets ID
 ========================================================= */
 const SHEET_ID = '19bkyyGQLcV70gPD7cc-IrNmFErQAJ3QGrhJ7y_LgGoo';
 
-
-
-fitBoardToViewport();
 
 
 /* =========================================================
