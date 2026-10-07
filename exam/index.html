@@ -31,7 +31,7 @@
     --active-bg: #064e3b;
     --active-text: #4ade80;
 
-    --font-left-column: 6.7vh;
+    --font-left-column: 4.8vh;
     --font-clock-num: 14vh;
     --font-att-label: 3vh;
     --font-att-num: 8.5vh;
@@ -57,6 +57,7 @@ body {
 
     width: 100vw;
     height: 100vh;
+    height: 100dvh;
 
     overflow: hidden;
 
@@ -99,14 +100,16 @@ body {
 }
 
 
-/* 首頁標題 */
+/* 首頁標題（已向上調高位置） */
 #page-index h1 {
 
     font-size: 3.5rem;
 
     color: #38bdf8;
 
-    margin-bottom: 3.5rem;
+    margin-top: -10vh;
+
+    margin-bottom: 5rem;
 }
 
 
@@ -168,7 +171,7 @@ body {
 
     grid-template-columns: 1.4fr 1fr;
 
-    grid-template-rows: 0.6fr 0.8fr 3.9fr;
+    grid-template-rows: 0.7fr 1fr 3.6fr;
 
     grid-template-areas:
         "notif notif"
@@ -176,11 +179,9 @@ body {
         "subj att";
 
     height: 98vh;
+    height: 98dvh;
 
     padding: 0.8vh;
-
-    /* 讓整個看板高度隨瀏覽器高度伸縮 */
-    min-height: 0;
 
     gap: 1vh;
 
@@ -337,17 +338,17 @@ body {
 
     grid-area: subj;
 
-    justify-content: flex-start;
+    justify-content: space-between;
 
     align-items: stretch;
 
-    padding: 1vh 0.5vh;
+    padding: 0.8vh 0.5vh;
 
     gap: 0.5vh;
 
-    /* 左側七節平均分配目前可用高度，避免高度不足時互相擠壓 */
+    height: 100%;
+
     min-height: 0;
-    overflow: hidden;
 }
 
 
@@ -357,39 +358,20 @@ body {
     display: grid;
 
     grid-template-columns: 1fr 1.4fr 1.3fr;
-	
-    height: auto;
+
+    flex: 1;
+
     min-height: 0;
-    flex: 1 1 0;
 
     align-items: center;
 
-    padding: 0.8vh 1.5vw;
+    padding: 0 1.5vw;
 
-    border-radius: 2vh;
-
-    min-width: 0;
-    overflow: hidden;
+    border-radius: 1.5vh;
 
     font-size: var(--font-left-column);
 
     color: #ffffff;
-}
-
-.subject-row span {
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.subject-row span:nth-child(1),
-.subject-row span:nth-child(3) {
-    text-align: center;
-}
-
-.subject-row span:nth-child(2) {
-    text-align: left;
 }
 
 
@@ -447,8 +429,6 @@ body {
     padding: 1.5vh;
 
     gap: 1vh;
-    min-height: 0;
-    overflow: hidden;
 }
 
 
@@ -494,8 +474,6 @@ body {
     border-radius: 1vh;
 
     font-size: var(--font-att-num);
-    min-height: 0;
-    padding: 0;
 }
 
 
@@ -519,7 +497,6 @@ textarea {
     resize: none;
 
     font-size: 3vh;
-    min-height: 0;
 }
 
 
@@ -597,26 +574,27 @@ textarea {
 
 
 /* =========================================================
-   [新增] 彈出式訊息視窗 (Modal) 樣式
+   彈出式訊息視窗 (Modal) 樣式
 ========================================================= */
 .modal-overlay {
-    display: none; /* 預設隱藏，啟用時改為 flex */
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.75); /* 半透明黑底 */
-    backdrop-filter: blur(6px); /* 輕微毛玻璃背景模糊效果 */
+    height: 100dvh;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
     justify-content: center;
     align-items: center;
-    z-index: 5000; /* 確保疊在最上層 */
+    z-index: 5000;
 }
 
 .modal-card {
     background: #1e1e1e;
-    border: 3px solid #ffeb3b; /* 明亮的黃色邊框提示 */
+    border: 3px solid #ffeb3b;
     border-radius: 3vh;
     width: 80vw;
     max-width: 850px;
@@ -640,7 +618,7 @@ textarea {
     font-size: 5vh;
     color: #ffffff;
     line-height: 1.2;
-	word-break: break-all;
+    word-break: break-all;
     font-weight: 600;
 }
 
@@ -664,36 +642,6 @@ textarea {
 
 .modal-btn:active {
     transform: scale(0.98);
-}
-
-
-
-/* =========================================================
-   高度自適應
-   - 所有主要尺寸以 vh 為基準，隨瀏覽器高度同步縮放
-   - 不改變原本左右欄與上下區塊比例
-   - 當高度不足時，內容區允許縮小，不讓文字把框架撐破
-========================================================= */
-@media (max-height: 850px) {
-
-    :root {
-        --font-left-column: 5.9vh;
-        --font-clock-num: 12vh;
-        --font-att-label: 2.6vh;
-        --font-att-num: 7.2vh;
-        --font-notif: 5.1vh;
-    }
-}
-
-@media (max-height: 700px) {
-
-    :root {
-        --font-left-column: 5.2vh;
-        --font-clock-num: 10.5vh;
-        --font-att-label: 2.3vh;
-        --font-att-num: 6.2vh;
-        --font-notif: 4.5vh;
-    }
 }
 
 </style>
@@ -979,7 +927,7 @@ function goHome() {
 
     clearInterval(timer2);
 
-    closeModal(); // 回首頁時順便防呆關閉視窗
+    closeModal();
 
     document.getElementById('page-board')
         .style.display = 'none';
@@ -1164,7 +1112,6 @@ async function refreshData() {
 
             filtered.forEach(r => {
 
-                /* 空白列直接略過 */
                 if (!r[2] || !r[4] || !r[5]) return;
 
                 const s =
@@ -1375,7 +1322,7 @@ async function syncMessage() {
 
 
 /* =========================================================
-   更新跑馬燈 [此處整合了新增的 Modal 彈出視窗觸發邏輯]
+   更新跑馬燈
 ========================================================= */
 function updateMarquee(msg) {
 
@@ -1386,6 +1333,7 @@ function updateMarquee(msg) {
 
     const silent = [
 
+        'Currently no message...',
         '目前無任何訊息...',
         '讀取訊息中...'
 
@@ -1405,7 +1353,6 @@ function updateMarquee(msg) {
 
         audio.play().catch(()=>{});
 
-        // [新增] 當滿足「系統就緒」、「非預設空白字串」、「新訊息出現」三個條件時，觸發中央彈出式畫面
         showModal(msg);
     }
 
@@ -1447,9 +1394,9 @@ function updateMarquee(msg) {
 
 
 /* =========================================================
-   [新增] 彈出式視窗控制功能 (顯示與關閉)
+   彈出式視窗控制功能
 ========================================================= */
-function showModal(msg) {
+showModal = function(msg) {
     const modal = document.getElementById('message-modal');
     const modalText = document.getElementById('modal-msg-text');
     
@@ -1457,7 +1404,7 @@ function showModal(msg) {
     modal.style.display = 'flex';
 }
 
-function closeModal() {
+closeModal = function() {
     const modal = document.getElementById('message-modal');
     modal.style.display = 'none';
 }
